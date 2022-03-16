@@ -1,0 +1,48 @@
+version: '2.1'
+  services:
+    wireguard:
+      cap_add:
+        -NET_ADMIN
+        -SYS_MODULE
+      image: linuxserver/wireguard
+      container_name: wireguard
+      ports:
+        - "51820:51820/udp"
+      networks:
+        - dvs
+      volumes: 
+        - /wireguard/config:/config
+        - /lib/modules:/lib/modules
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Europe/London
+        - SERVERPORT=51820
+        - PEERS=2
+        - INTERNAL_SUBNET=10.13.13.0
+        - ALLOWEDIPS=10.13.13.0/24 
+      sysctls:
+        - net.ipv4.conf.all.src_valid_mark=1
+      restart: "unless-stopped"
+      command:
+        - iptables -t nat -A PREROUTING -p tcp --dport 445 -j DNAT --to-destination 172.28.28.5:445
+        - iptables -t nat -A PREROUTING -p tcp --dport 139 -j DNAT --to-destination 172.28.28.5:139
+        - iptables -t nat -A PREROUTING -p udp --dport 445 -j DNAT --to-destination 172.28.28.5:445
+        - iptables -t nat -A PREROUTING -p udp --dport 139 -j DNAT --to-destination 172.28.28.5:139
+        - iptables -t nat -A POSTROUTING -j MASQUERADE
+    samba: 
+      cap_add:
+        - NET_ADMIN
+        - SYS_MODULE
+      image: emrekaankocoglu/disposable-timemachine
+      networks:
+        dvs:
+          ipv4_address: 172.28.28.5
+      restart: "always"
+networks:
+        dvs:
+          ipam:
+            driver: default
+            config:
+              - subnet: 172.28.28.0/24
+
