@@ -1,5 +1,5 @@
 # disposable-timemachine-docker
-Temporary backups with Apple Time Machine, accessible with a Wireguard tunnel-containerized with Docker
+Temporary backups with Apple Time Machine, accessible with a Wireguard tunnel-containerized with Docker. Based on the image [linuxserver/docker-wireguard](https://github.com/linuxserver/docker-wireguard)
 ## Why?
 A friend of mine who works at a repair shop dealing with Apple computers asked me if they can create temporary backups that will be deleted once the repair job is done and the customer is satisfied with the data integrity. Since there exists no backup solution better than Apple's Time Machine for Macs, we opted for a TM-capable SMB share in a virtual machine for the ease of deleting all the content once they are done with it. An additional VPN layer was added for making it remotely user-accessible in case of a conflict.
 
