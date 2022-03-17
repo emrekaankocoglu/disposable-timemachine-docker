@@ -1,6 +1,7 @@
 #!/bin/bash
 apt -y update
 apt install -y samba
+# required change in samba config
 echo "[global]
 	min protocol = SMB2
 	vfs objects = fruit streams_xattr  
@@ -41,8 +42,10 @@ useradd smbuser -s /usr/sbin/nologin
 (echo "a";echo "a") | smbpasswd -a -s smbuser
 mkdir /srv/samba
 mkdir /srv/samba/timemachine
+#owning the share is needed for timemachine backups
 chown -R smbuser /srv/samba
 chmod -R 777 /srv/samba
 service smbd start
 service nmbd start
+#since the existing entrypoint is overwritten, the old entrypoint is executed at the end-found by inspecting the original container from linuxserver
 /init
