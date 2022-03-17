@@ -45,4 +45,4 @@ chown -R smbuser /srv/samba
 chmod -R 777 /srv/samba
 service smbd start
 service nmbd start
-
+/init
